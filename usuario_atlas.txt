@@ -1,0 +1,8 @@
+dev
+8sJDGNsPDMFSlDL1
+
+mongo "mongodb+srv://dev:8sJDGNsPDMFSlDL1@cluster0.ivjp2.mongodb.net/shop?retryWrites=true&w=majority"
+
+
+mongo "mongodb+srv://cluster0.ivjp2.mongodb.net/shop" --username n
+NuqmDs3JZkZJ7QbQ

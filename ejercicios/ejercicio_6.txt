@@ -1,0 +1,36 @@
+1) pick 3 points on google maps and store the in a collection
+2) pick a point and find the nearest point within a min and max distance
+3) pick an area and see wich point (that are store in your collection) it contains
+4) store at least one area in a different collection
+5) pick a point and find out wich areas in your collection contain that point
+
+
+1)
+
+db.direccion.insertOne({name: "Parque O'Higgins", location: {type: "Point", coordinates: [-70.6601976, -33.4649749]}})
+db.direccion.insertOne({name: "Fantasilandia", location: {type: "Point", coordinates: [-70.6594031, -33.4621616]}})
+db.direccion.insertOne({name: "Jardín Chino", location: {type: "Point", coordinates: [-70.65888,-33.46894]}})
+ 
+2)
+
+db.direccion.createIndex({location: "2dsphere"})
+db.direccion.find({location: {$near: {$geometry: {type: "Point", coordinates: [-70.65836,-33.46479], $maxDistance: 30, $minDistance: 10}}}}).pretty()
+
+
+3)
+
+
+
+const a1 = [-70.66387, -33.45851] esq s iz
+const a2 = [-70.65780, -33.45828] es s de
+const a3 = [-70.65661, -33.46993]  es i de
+const a4 = [-70.66324, -33.47029] es i iz
+
+db.direccion.find({location: {$geoWithin: {$geometry: {type: "Polygon", coordinates: [[a1, a2, a3, a4,a1]]}}}}).pretty()
+
+4)
+ db.areas.insertOne({name: "Parque O'Higgins", area: {type: "Polygon", coordinates: [[a1,a2,a3,a4,a1]]}})
+ db.areas.createIndex({area: "2dsphere"})
+ 
+5) 
+db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates: [-70.66236, -33.46579] }}}}).pretty()

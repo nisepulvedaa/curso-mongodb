@@ -1,0 +1,21 @@
+- inssertar multiples compañias en una collection
+
+nombre
+cuidad
+cantidadEmpleados:
+
+db.company.insertOne({_id: "BRAINS", name: "Brains Spa", location: "Viña del mar", qantityEmployess:20})
+db.company.insertMany([{_id: "DIRECTV", name: "Directv", location: "Santiago", qantityEmployess:15}, {_id: "ITPEOPLE",name: "IT PEOPLE", location: "Santiago",qantityEmployess:20},{_id: "GUZMAN",name: "Agencia Guzman", location: "Valparaiso", qantityEmployess: "20"}])
+db.company.insertMany([{_id: "ZEAL",name: "ZEAL", location: "Valparaiso", qantityEmployess:15}, {_id: "BRAINS" ,name: "ARMEX", location: "Santiago",qantityEmployess:20},{_id: "ENTEL",name: "Entel", location: "Valparaiso", qantityEmployess: "20"}])
+db.company.insertMany([{_id: "ZEAL",name: "ZEAL", location: "Valparaiso", qantityEmployess:15}, {_id: "BRAINS" ,name: "ARMEX", location: "Santiago",qantityEmployess:20},{_id: "ENTEL",name: "Entel", location: "Valparaiso", qantityEmployess: "20"}],{ordered: false})
+
+*
+db.company.insertOne({_id: "RIPLEY", name: "RIPLEY", location: "Valparaiso", qanityEmployess:20}, {writeConcern: {w:0}})
+db.company.insertOne({_id: "FALLABELLA", name: "FALLABELLA", location: "Santiago", qanityEmployess:20}, {writeConcern: {w:1}})
+
+the correct answer is
+
+
+db.company.insertOne({_id: "RIPLEY", name: "RIPLEY", location: "Valparaiso", qanityEmployess:20}, {writeConcern: {w:1, j: true}})
+db.company.insertOne({_id: "FALLABELLA", name: "FALLABELLA", location: "Santiago", qanityEmployess:20}, {writeConcern: {w:1,j:false}})
+

@@ -1,0 +1,20 @@
+usuario
+-id
+-nombre
+-edad
+-email
+
+post
+-id
+-title
+-text
+-tags
+
+comentario
+-id
+-text
+
+
+use blog
+db.usuarios.insertMany([{nombre: "Nicolas Sepulveda", edad: 26, email: "ni.sepulvedaa@gmail.com"},{nombre: "Wisleidy Ustariz", edad: 27, email: "wisleidiuy@gmail.com"}])
+db.post.insertOne({title: "Mi primer Post",text: "Este es mi primer posteo, espero que les guste!, tags: ["new","tech"], creador: id_usuario1, comentarios: [{text: "Me gusta este post", author: idUsuario2}] })

@@ -1,0 +1,42 @@
+example
+
+Patient
+
+firstName
+lastName
+age
+history	
+	disease(enfermedad)
+	treatment(tratamiento)
+	
+* insertar 3 pacientes con una historia por pacientes
+
+
+* actualiar la informacion de un paciente con nueva edad, nombre y historia
+
+* buscar todos los pacientes que la fecha sea mayor de 30 o el value que yo elija
+
+* elimina todos los pacientes que tengan cold como enfermedad
+
+desarrollo
+
+use hospital
+
+db.pacientes.insertOne({nombre: "Nicolas", apellido: "Sepulveda", edad: 26, historia: {enfermedad:"frio",tratamiento: "Tomar algo Caliente"}})
+db.pacientes.insertOne({nombre: "Juan", apellido: "Baez", edad: 24, historia: {enfermedad:"calor",tratamiento: "Tomar algo Frio"}})
+db.pacientes.insertOne({nombre: "Andres", apellido: "Cerro", edad: 32, historia: {enfermedad:"frio",tratamiento: "Tomar algo Caliente"}})
+
+db.pacientes.insertMany({nombre: "Nicolas", apellido: "Sepulveda", edad: 26, historia: {enfermedad:"frio",tratamiento: "Tomar algo Caliente"}},{nombre: "Juan", apellido: "Baez", edad: 24, historia: {enfermedad:"calor",tratamiento: "Tomar algo Frio"}},{nombre: "Andres", apellido: "Cerro", edad: 32, historia: {enfermedad:"frio",tratamiento: "Tomar algo Caliente"}})
+
+db.pacientes.find().pretty()
+
+db.pacientes.updateOne({"_id": ObjectId("5fd8ff2f7809037b9f43c3bb")}, {$set: {nombre: "Felipe", edad: 34, historia: {enfermedad: "calor", tratamiento: "Tomar algo frio"}}})
+
+//check if my update is correct
+db.pacientes.find().pretty()
+
+db.pacientes.find({edad: {$gt:30}}).pretty()
+
+db.pacientes.deleteMany({"historia.enfermedad": "frio"})
+
+

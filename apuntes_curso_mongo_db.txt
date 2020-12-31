@@ -1,0 +1,1451 @@
+¿Que es Mongo Db?
+
+nombre derivado de la palabra enorme(humongous) porque esta base de datos esta construida
+para almacenar montones y montones de datos,
+no solo de la perpesctiva del tamaño de los datos, sino también en el sentido de que
+puede almacenar muchos datos y luego puede trabajar con ellos de manera eficiente.
+
+
+¿Como funciona?
+
+mongo db es un servidor de base datos que permite ejecutar distitnas bases de datos
+en el mismo servidor 
+
+a diferencia de otras base de datos en mongo db tenemos las llamadas colecciones
+que equivalen a lo que serian las tablas en una base relacional
+
+adentro de las colecciones tiene los llamados documentos, que se ven mas o menos asi
+que su equivalente podria ser un registro dentro de una tabla de una base de datos
+
+mongo db almacena datos en javascript
+
+puede almacenar datos totalmente diferentes en una misma coleccion
+
+
+BSON data Structura
+
+BSON es un formato de intercambio de datos usado principalmente para su almacenamiento y transferencia en la base de datos MongoDB. 
+
+no tenemos schemas en mongo db pero si tener varios documentos en una misma coleccion
+
+
+Ecosistema MongodDB
+
+MongoDB Database
+
+Stitch
+
+API de consulta sin servidor
+
+Herramienta que puedes usar para consultar eficientemente su absse de datos desde el interior
+de sus aplicaciones
+
+
+* comandos
+
+show dbs: permite 
+use shop: permite crear una base de datos con nombre shop
+db.products.insertOne({name: "A Book", price: 12.99}): permite crear un documeto con informacion de un producto
+db.products.insertOne({name: "A Book", price: 12.99}, description:"Book of harr"): permite crear un documeto con informacion de un producto
+db.products.find(): permite mostrar los documentos dentro de products 
+db.products.find().pretty(): permite mostrar los documentos dentro de products de forma mas bonita
+db.flightData.updateOne({"distance": 12000}, {$set:{"marker":"delete"}}): actualiza y agrega un nuevo valor
+db.flightData.updateMany({}, {$set: {marker: "toDelete"}}):actualiza todos los valor y agrega o modifica ese valor
+db.flightData.deleteMany({marker: "toDelete"}): elimina todos los documentos que tengan ese marcador
+db.flightData.insertMany([
+  {
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+  },
+  {
+    "departureAirport": "LHR",
+    "arrivalAirport": "TXL",
+    "aircraft": "Airbus A320",
+    "distance": 950,
+    "intercontinental": false
+  }
+])
+db.flightData.find({departureAirport: "MUC"}).pretty()
+db.flightData.find({distance: {$gt: 1000}}).pretty(): muestra los objetos que la distance sean mayores a 1000
+db.flightData.One({distance: {$gt: 900}}): muestra el primer objeto que la distance sean mayores a 1000
+db.flightData.renameCollection("vuelos")
+db.vuelos.updateOne("_id": ObjectId("adsasdsad")}, {$set: {delayed:true}})
+db.vuelos.update("_id": ObjectId("adsasdsad")}, {$set: {delayed:false}}): update solo actualiza el objeto completo dejando solo los campos que le defini en el set
+
+db.vuelos.replaceOne("_id": ObjectId("adsasdsad")}, {
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+  })
+db.pasajetos.find().toArray(): devuelve toods los objetos de la colecction en formato de un arreglo
+db.pasajeros.find().forEach((pasajerosData) => {printjson(pasajerosData)})
+
+
+trabajando con mongoDb
+
+aplicaciones
+node.js -> MongoDb -> StrorageEngine (WiredTiger nombre del motor de almacenamiento) -z filr/data access
+mongo db shell -> MongoDb -> StrorageEngine (WiredTiger nombre del motor de almacenamiento) -z filr/data access
+
+MondoDbServer -> StorageEngine -> Db
+
+read + wrire data in memory (fast)
+
+* Linea de contenidos
+
+Introducion
+
+Basics & Basic Crud
+
+Data Schema & Relations
+
+Working with the shell
+
+Using compass
+
+Crud Deep dive - Create
+
+Crud Deep dive - Read
+
+Crud Deep dive - Update
+
+Crud Deep dive - Delete
+
+Using Indexes
+
+Working with Geospatial Data
+
+The Aggregation Framework
+
+Working with Numeric Data
+
+Security & Authentication
+
+Perfomance, Fult Tolerance & Deplayment
+
+Transactions
+
+From Shell to Drivers
+
+MongoDB Stich
+
+
+
+
+* What's Inside This Module?
+
+Basics about Collections & Documents
+
+Basic Data Types
+
+* Performing Crud Operations	
+
+			Database
+
+	Collection		Collection
+	 Document        Document
+	 Document		 Document
+	 Document		 Document
+
+bson: json binario para almacenar datos en su base de datos
+	
+	nosotros enviamos un json son pero el driver de mongo db los combierte a bson
+	
+	
+* CRUD Operations
+
+Create 
+-insertOne(data,options)
+-insertMany(data,options)
+Read
+-find(filter,options)
+-findOne(filter,options)
+Update
+-updateOne(filter,data,options)
+-updateMany(filter,data,options)
+-replaceOne(filter,data,options)
+Delete
+-deleteOne(filter,options)
+-deleteMany(filter,options)
+
+find nos devuelve no una lista de todos los objetos,
+sino que nos devuelve un objeto cursor con los 20 primeros registros
+
+
+proyeccion
+
+por ejemplo en mi base de datos tengo
+
+5 atributos
+
+id
+name
+address
+age
+male
+
+
+y en la aplicacion solo muestro
+
+name
+age
+
+
+documentos incrustados,
+significa agregar un atributo al documentos y ese atributo tiene que ser un objeto	
+
+db.pasajeros.updateOne({name:"Alberto Twostone", {$set: {hobbies: ["sport","cooking" ]}})
+db.vuelos.updateMany({}, {$set: {status: {description: "on-time", lastUpdated: "1 hour ago", details: {responsable: "Nicolas Sepulveda"}}}})
+db.vuelos.find({"status.description": "on-tine"}).pretty()
+db.vuelos.find({"status.details.responsible": "Nicolas Sepulveda"}).pretty()
+
+*Data types
+
+-Text
+-Boolean
+-Number
+-Integer (int32) 55
+number long (int64) 100000000000
+number decimal 12.99
+-objectId: objeto creado por mongo db que es un id unico del elemto creado
+-Date
+Iso date
+Timestamp
+-EmbeddeDocument
+-array
+
+db.companies.insertOne({name: "Fresh Apples Inc", isStartup: true, employees: 33, funding: 12301234567890, details: {ceo: "Mark Super"},tags:[{title: "super"},{title:"perfect"}], founding: new Date(), insertedAt: new Timestamp()})
+
+db.numeros.insertOne({a:NumberInt()}): permite que el valor numerico almacenado tenga un tamaño de 32 bits en la base de datos en vez de un flotante de 64 bits
+
+db.stats() muestra la informacion del tamaño de las base de datos guardadas en nuestro servior
+
+typeof db.numeros.findOne().a : vemos el tipo de datos almacenado en esa coleccion
+
+Relaciones
+
+se puede trabajar con documentos incrustados (embedded Documents) y tambien con referencias
+
+ejemplo documentos incrustados
+{
+	userName: 'max',
+	age: 29,
+	address: {
+		street: 'Secod Street',
+		city: 'New York'
+	}
+}
+
+ejemplos referencias
+
+{
+	userName: 'max',
+	favoBooks: [{},{}]
+}
+
+esto puede causar problemas porque se pueden duplicar mucho los datos
+
+es por eso que deberia quedar algo mas o menos asi:
+
+Customer
+
+{
+	userName: 'max'
+	favBooks: ['id', 'id2']
+}
+
+Boks
+
+{
+	_id: 'id1',
+	name: 'Lod of the Ring 1'
+}
+
+* relacion uno a uno documentos insertados
+ 
+ base de datos de un hospital
+ donde un paciente tiene un resumen de su enfermadad de una enfermera
+ siempre sera que una enfermera hara el resumen de solo un paciente
+
+db.pacientes.insertOne(name: "Nicolas", age: "26", resumenEnfermedad: "resumen-nicolas-1")
+db.resumenEnfermedad.insertOne({_id: "resumen-nicolas-1", enfermedad: ["cold","broken leg"]})
+
+si quieramos mostrar la lista de enfermedades de ese paciente deberiamos hacer lo siguient
+
+var idEnfermedad = db.pacientes.findOne().resumenEnfermedad
+db.resumenEnfermedad.findOne({_id: dsid})
+
+pero esto no es optimo
+
+-db.pacientes.insertOne({nombre: "Nicolas", edad: 26, resumenEnfermedad: {enfermedad: ["frio","pierna rota"]}})
+
+* relacion uno a uno usando referencias
+
+base de datos de los autos que poseen las personas considerando que la persona solo puede tener un autos
+
+use autosData
+
+db.personas.insertOne({nombre: "Nicolas", auto: {modelo: "BMW", precio: 40000}})
+
+lo optimo seria hacer algo asi
+
+db.personas.insertOne({nombre: "Nicolas", edad: 26, salario: 3000})
+db.autos.insertOne({modelo: "BMW", precio: 40000, owner: idDeLaPersona})
+
+
+* relacion uno a muchos documentos incrustados
+
+use soporte
+
+db.preguntas.insertOne({creador: "Nicolas", pregunta: "¿Como funciona todo esto?, respuesta: ["q1a1","q1a2"]})
+db.respuestas.insertMany([{_id: "q1a1", text: "funciona asi"}, {_id: "q1a2", text: "Gracias"}])
+
+lo optimo deberia ser algo asi
+
+db.preguntas.insertOne({creador: "Nicolas", pregunta: "¿Como funciona todo eso?, respuestas: [{texto: "Lo hago de esta manera"}, {texto: "Gracias"}]})
+
+* relacion uno a muchos referencias
+
+ciudades que tienen la informacion de sus cuidadanos
+
+use ciudadData
+
+db.ciudades.insertOne({nombre: "New York", coordenadas: {lat:21, lng: 55}})
+db.cuidadanos.insertMany([{nombre: "Nicolas Sepulveda", cityId: id_ciudad},{nombre: "Wisleidy Ustariz", cityId: id_cuidad}])
+esta es la forma correcta de almacenarlo ya que asi no ocupu el limite de 16 mg por coleccion demongo db
+
+
+*relacion muchos a muchos documentos incrustados
+
+un cliente puede comprar un o muchos productos y un producto puede ser comprado por uno o muchos clientes
+
+en este caso se usaran referencias
+
+use tienda
+
+db.productos.insertOne({titulo: "un libro", precio: 12.99})
+db.clientes.insertOne({nombre: "Nicolas", edad: 26})
+db.ordenes.insertOne({productoId: idProducto, clienteId: idProducto
+db.clientes.updateOne({"_id":clienteId}, {$set: {ordenes: [{productoId: idProducto, cantidad: 2}]}} )
+
+
+* relacion muchos a muchos referencias
+
+un autor tiene muchos libros y un libro puede tener muchos autores
+
+db.libros.insertOne({nombre: "Nicolas Sepulveda", autores: [{nombre: "Nicolas Sepulveda, edad: 29},{nombre: "Wisleidy Ustariz", edad: 30}]})
+db.autores.insertMany([{name: "Nicolas Sepulveda", edad: 29, direccion : {calle: "Main"}}, {nombre: "Wisleidy Ustariz", edad: 30, direccion: {calle: "Tree"}}])
+
+acalo mejor es dejar anidados los autores a la colecion de libros para eso haremos lo siguiente
+
+db.libros.updateOne({}, {$set: {autores: [objectId, objectId]}})
+
+tener en consideracion
+
+como uso mis datos
+con que frecuencia huzo mis datos
+con que frecuencia los cambio
+como estan relacionados uno con otro
+
+* herramienta util que ofrece mongo db para fusionar documentos relaciones que separo
+$lookup (operador de busqueda)
+
+para mostras los datos relacionados por referencia debemos hacer lo siguiente
+
+db.libros.aggregate([$lookup: {from: "autores", localField: "autores", foreignField: "_id", as: "creadores"}}]).pretty()
+
+
+cosas a considerar para el modelamiento de los datos
+
+-considerar el formato en el que se obtendran los datos
+-con que frecuencia obtengo y cambio los datos
+-asegurate de no tener duplicados
+-alcanzara un limite de datos
+
+Useful Resources & Links
+Helpful Articles/ Docs:
+
+The MongoDB Limits: https://docs.mongodb.com/manual/reference/limits/
+
+The MongoDB Data Types: https://docs.mongodb.com/manual/reference/bson-types/
+
+More on Schema Validation: https://docs.mongodb.com/manual/core/schema-validation/
+
+* comando para configurar el path
+
+mongod --dbpath ruta_carpeta_db --logpath ruta_Archivos_log.log
+
+
+Useful Resources & Links
+Helpful Articles/ Docs:
+
+More Details about Config Files: https://docs.mongodb.com/manual/reference/configuration-options/
+
+More Details about the Shell (mongo) Options: https://docs.mongodb.com/manual/reference/program/mongo/
+
+More Details about the Server (mongod) Options: https://docs.mongodb.com/manual/reference/program/mongod/
+
+
+Useful Resources & Links
+The MongoDB Compass Docs: https://docs.mongodb.com/compass/master/install/
+
+Only available in the Enterprise Edition => Exploring Schemas in Compass: https://docs.mongodb.com/compass/master/schema/
+
+* write concern
+
+db.personas.insertOne({name: "Chrissy", age: 41}, {writeConcern: {w:0}})
+
+no retorna object id por que solo manda la solictud para insertar no espera respuesta del servidor
+
+
+db.personas.insertOne({name: "Chrissy", age: 41}, {writeConcern: {w:1}})
+
+envia la solicitud y espera respuesta
+
+
+db.personas.insertOne({name: "Chrissy", age: 41}, {writeConcern: {w:1, j: false}})
+
+envia la solicitud y espera respuests
+
+
+db.personas.insertOne({name: "Chrissy", age: 41}, {writeConcern: {w:1, j: true}})
+
+se inserta primero al journal , se espera que al edicion del journal termine y se inserta ern la bd
+
+
+* importar archivo 
+
+mongoimport tv-shows.json -d movieData -c movies --jsonArray --drop
+
+sino hacerlo por mongocompass
+
+
+Useful Resources & Links
+Helpful Articles/ Docs:
+
+insertOne(): https://docs.mongodb.com/manual/reference/method/db.collection.insertOne/
+
+insertMany(): https://docs.mongodb.com/manual/reference/method/db.collection.insertMany/
+
+Atomicity: https://docs.mongodb.com/manual/core/write-operations-atomicity/#atomicity
+
+Write Concern: https://docs.mongodb.com/manual/reference/write-concern/
+
+Using mongoimport: https://docs.mongodb.com/manual/reference/program/mongoimport/index.html
+
+
+
+*operadores de busqueda
+
+findOne no devulve un cursor sino que devuelve solo un documento
+
+si la base de datos tiene mas de 20 documentos, por defecto el methodo find
+nos devolvera los primeros 20 para evitar colapsar el ancho de banda
+
+* operadores de comparacion
+
+db.movies.find({runtime: {$eq : 60}}) : operador igual a 
+db.movies.find({runtime: {$ne : 60}}) : operador no igual a
+db.movies.find({runtime: {$lt : 40}}) : operador menor a
+db.movies.find({runtime: {$lte : 40}}) : operador menor o igual
+db.movies.find({runtime: {$gt : 40}}) : operador mayor a
+db.movies.find({runtime: {$gte : 40}}) : operador mayor o igual a
+db.movies.find({runtime: {$in : [30,42]}}).pretty() : operador valores in 
+db.movies.find({runtime: {$nin : [30,42]}}).pretty() : operador valores not in 
+db.movies.find({"rating.average": {$gt: 7}}).pretty() filtro de una valor de un documento incrustado
+db.movird.find({genres: ["Drama"]}).pretty() busca un arreglo que sea igual a
+db.movies.find({"rating.average": {$lt: 5}}).count() obtiene la cantidad de registros que cumplen esa condicion
+db.movies.find({$or: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]}).pretty()   operador or
+db.movies.find({$nor: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]}).pretty()   devulve todos los registros que no estan dentro de ese rango
+db.movies.find({$and: [{"rating.average":  {$gt:9}}, {genres: "Drama"}]}).pretty() operador and
+db.movies.find({"rating.average": {$gt: 9}, genres: "Drama"}).pretty() operador and pero filtrando distintos campos
+db.movies.find({runtime: {$not: {$eq: 60}}}).count() filtro para qu el resultado no sea igual a 60
+
+
+se ocupa $and finalmente porque se puede dar el caso de que quiera filtrar dos valores de un mismo campo, y en algunos drivers javascript no permite hacer eso
+
+
+----base de datos de prueba
+
+db.usuarios.insertMany([{name: "Max",hobbies: [{title : "Sports", frecuency: 3}, {title: "Cooking", frequency: 6}] , phone: 123456789}, {name: "Manuel", hobbies: [{title: "Cooking", frequency: 5}, {title: "Cars", frequency: 2 }], phone: "987654321", age:30 }])    
+db.usuarios.find({age: {$exists:true}}).pretty() obtiene todos los registros que tienen el campo age dentro de su coleccion
+
+
+db.usuarios.find({age: {$exists:true,$gte: 30}}).pretty() tambien se puede agregar otros tipos de operadores para complementar la consulta
+db.usuarios.insertOne({name: "Anna", hobbies: [{title: "Sports", frequency: 2}, {title: "Yoga", frequency: 3}], phone: "80811987291", age:null})
+db.usuarios.insertOne({name: "Anna", hobbies: [{title: "Sports", frequency: 2}, {title: "Yoga", frequency: 3}], phone: "80811987291", age:null})
+db.usuarios.insertOne({name: "Anna", hobbies: [{title: "Sports", frequency: 2}, {title: "Yoga", frequency: 3}], phone: "80811987291", age:null})
+db.usuarios.insertOne({name: "Chris", hobbies: ["Sports","Cooking", "Hiking"]})    
+db.usuarios.find({age: {$exists: true, $ne: null}}).pretty()
+
+
+db.usuarios.find({phone: {$type: "number" }}).pretty()
+db.usuarios.find({phone: {$type: ["double","string"]}}).pretty()
+
+obtiene todos los registros que su campo phone sea numerico
+
+
+db.movies.find({summary: {$regex: /musical/}}).pretty()   obtiene todos los elementos que dentro del campo summary contenga el texto entre //                                                                                                                                                 
+
+
+
+use facturacion
+
+db.ventas.insertMany([{volume: 100 , target: 120} , {volume: 89, target: 80}, {volume: 200, target: 177}])
+
+db.ventas.find({$expr: {$gt: ["$volume","$target"]}}).pretty() traeme los datos de ventas cuando el volumen sea mayor que el target
+
+
+db.ventas.find({$expr: {$gt: [{$cond: {if: {$gte: ["$volume", 190]},then: {$subtract: ["$volume",10]}, else: "$volume"}},"$target"]}}).pretty() 
+query extraña
+db.ventas.find({$expr: {$gt: [{$cond: {if: {$gte: ["$volume", 190]},then: {$subtract: ["$volume",30]}, else: "$volume"}},"$target"]}}).pretty() 
+
+
+/*****************************/
+
+match data in array
+
+db.usuarios.find({"hobbies.title": "Sports"}).pretty()
+db.usuarios.find({hobbies: {$size: 3}}).pretty() devuelve los registros que posean un array con 3 elemtnos
+db.movieeStarts.find({genre: {$all: ["action", "thriller"]}}).pretty() obtiene todaas las peliculas que tengan en el array de genero los generos de action y thiller
+
+
+/**********************************/
+misma query
+db.usuarios.find({$and: [{"hobbies.title": "Sports"},{"hobbies.frequency": {$gte: 3}}]}).pretty() 
+db.usuarios.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}).pretty()
+
+
+
+*understanding Cursors
+
+metodo find nos da un cursor
+metodo findOne nos da un elemento de una coleccion
+
+const dataCursor = db.movies.find()
+dataCursor.next() muestra el siguiente resultado
+dataCursor.forEach(doc => {printjson(doc)} )
+dataCursor.hasNext()
+db.movies.find().sort({"rating.average": -1}).pretty() filtrando resultados del cursor de manera desc
+db.movies.find().sort({"rating.average": 1}).pretty() filtrando resultados del cursor de manera asc
+db.movies.find().sort({"rating.average": 1}, {runtime: -1}).pretty() agregando mas de un filtro
+db.movies.find().sort({"rating.average": 1}, {runtime: -1}).skip(10).pretty() filtro que omite los primeros 10 resultados
+db.movies.find().sort({"rating.average": 1}, {runtime: -1}).skip(100).limit(10).pretty() limita los resultados del cursor a 10
+
+projection (proyeccciones)
+db.movies.find({},{name:1, genres:1, runtime: 1, rating: 1}).pretty() permite filtrar solo un elemento de la coleccion
+db.movies.find({},{name:1, genres:1, runtime: 1, rating: 1, _id: 0}).pretty() si quiero omitir el id solamente ese campo lo tengo que agregar como 0 los otros se agregan por default
+db.movies.find({},{name:1, genres:1, runtime: 1, "rating.average": 1, _id: 0}).pretty() si quiero filtrar solamente un campo de un documento incrustado
+db.movies.find({},{name:1, genres:1, runtime: 1, "rating.average": 1,"schedule.time": 1, _id:0}).pretty()
+b.movies.find({genres: "Drama"}, {"genres.$": 1}).pretty() solo muestrame el genero que encontraste
+db.movies.find({genres: {$all: ["Drama", "Horror"]}}, {"genres.$": 1}).pretty() 
+db.movies.find({genres: "Drama"}, {genres: {$elemMatch: {$eq: "Horror"}}}).pretty() muestrame todos los elemntos que sean igual a horror
+
+ db.movies.find({"rating.average": {$gt: 9}}, {genres: {$slice: 2},name: 1}).pretty()   solamente me trae dos elementos de una coleccion dentro de un objeto
+ db.movies.find({"rating.average": {$gt: 9}}, {genres: {$slice: [1,2]},name: 1}).pretty()   se salta el primer elemnto de un array y muestra los dos siguientes
+ 
+
+
+updating fields with updateOne , updateMany
+
+db.usuariosUpdate.updateOne({"_id": ObjectId("5fe274a8eeef5dc7c2eeef7e")}, {$set: {hobbies: [{title: "Sports", frequency: 5}, {title: "Cooking",frequency: 3 }, {title: "Hiking", frequency: 1}]}})
+-cambiamos la estructura de ser un arreglo, a ser un arreglo de objectos
+
+ db.usuariosUpdate.updateMany({"hobbies.title": "Sports"}, {$set: {isSporty: true}})
+ consulta que revisa si en sus hobbies tiene la palabra Sports si la tiene se agrega una nueva columa
+ con el valor isSporty
+ 
+ db.usuariosUpdate.updateOne({"_id": ObjectId("5fe274a8eeef5dc7c2eeef7f")}, {$set: { age: 40, phone: 483924792}} )
+ 
+ consulta que agrega un campo edad y numero de telefono a la collection
+
+
+db.usuariosUpdate.updateOne({name: "Manuel"}, {$inc: {age: 2}})
+consulta que incrementa la edad de los usurios en dos años
+
+db.usuariosUpdate.updateOne({name: "Manuel"}, {$inc: {age: -1}})
+db.usuariosUpdate.updateOne({name: "Manuel"}, {$inc: {age: 1},$set: {isSporty:false}})
+se pueden usar multiples operadores para actualizar datos 
+
+
+db.usuariosUpdate.updateOne({name: "Chris"},{$min: {age:35}})
+solamente cambia el dato si el valor que le entregamos para actualizar es menor que el valor
+que existe en el documento
+
+
+db.usuariosUpdate.updateOne({name: "Chris"},{$max: {age:38}})
+solamente cambia el dato si el valor que le entregamos para actualizar es mayor que el valor
+que existe en el documento
+
+
+multiplica el valor por un dato
+db.usuariosUpdate.updateOne({name: "Chris"}, {$mul: {age: 1.1}}) 
+
+
+** actualizando matrices  
+
+
+ db.users.updateMany({isSporty: true}, {$unset: {phone: ""}})   
+ elimina un valor  de la estructura del documento
+ 
+ 
+db.users.updateMany({isSporty: true}, {$unset: {phone: ""}})   
+query que permite renombrar un dato dentro de un documento
+
+db.usuariosUpdate.updateOne({name: "Maria"}, {$set: {age: 29,hobbies: [{title: "Good food", frequency: 3}],isSporty: true}},{upsert: true})
+si el documento no existe entonces lo creamos
+
+db.usuariosUpdate.updateMany({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}, {$set: {"hobbies.$.highFrequency":true}})
+agregar un nuevo elemento dentro de los documentos que tengan un arreglo de hobbies y dentro de ese arreglo este el valor "Sports" y que su frequencia sea mayor igual a 3
+ 
+db.usuariosUpdate.updateMany({"hobbies.frequency": {$gt:2}}, {$set: {"hobbies.$.goodFrequency": true}})
+agregar nuevo valor en un array, actualiza la primera concidencia
+
+ db.usuariosUpdate.updateMany({age: {$gt: 30}}, {$inc: {"hobbies.$[].frequency": -1}})
+ le resta un valor a un elemento de una coleccion7
+ 
+> db.usuariosUpdate.updateMany({"hobbies.frequency": {$gt: 2}}, {$set: {"hobbies.$[el].goodFrequency": true }}, {arrayFilters: [{"el.frequency": {$gt: 2}}]})
+query extraña
+
+
+db.usuariosUpdate.updateOne({name: "Maria"}, {$push: {hobbies: {title: "Sports", frequency: 2}}})
+agregar elementos a un arreglo usando push
+
+> db.usuariosUpdate.updateOne({name: "Maria"}, {$push: {hobbies: {$each: [{title: "Good Wine", frequency: 1},{title: "Hiking", frequency: 2}], $sort: {frequency: -1}}}})
+actualizame los datos de forma ordenada
+
+db.usuariosUpdate.updateOne({name: "Maria"}, {$pull: {hobbies: {title: "Hiking"}}})
+actualizacion que elimina un dato del arreglo
+
+db.usuariosUpdate.updateOne({name: "Chris"}, {$pop: {hobbies: 1}})
+remover elementos de un array pero pasandole una posicion
+
+db.usuariosUpdate.updateOne({name: "Maria"}, {$addToSet: {hobbies: {title: "Hiking", frequency: 2}}})
+lo mismo que push pero no permite agregar valores duplicados
+
+Useful Resources & Links
+Helpful Articles/ Docs:
+
+Official Document Updating Docs: https://docs.mongodb.com/manual/tutorial/update-documents/
+
+db.usuariosUpdate.drop()
+agregar elementos a un arreglo usando push
+ le resta un valor a un elemento de una coleccion
+ le resta un valor a un elemento de una coleccion
+ 
+ 
+ Index
+ 
+ los indeces puede acelear las consultass 
+ 
+ db.contactos.explain().find({"dob.age": {$gt: 60}})  
+ query que nos entrega una especie de mapa de ejecucion
+ db.contactos.explain("executionStats").find({"dob.age": {$gt: 60}})      
+ 
+ 
+ crear index de forma accendiente o descendiente
+ 
+ db.contactos.createIndex({"dob.age": 1})                                                                                                                                                      
+ db.contactos.createIndex({"dob.age": -1})                                                                                                                                                      
+ 
+ 
+ 
+ 
+ Indexes Behind the Scenes
+What does createIndex() do in detail?
+
+Whilst we can't really see the index, you can think of the index as a simple list of values + pointers to the original document.
+
+Something like this (for the "age" field):
+
+(29, "address in memory/ collection a1")
+
+(30, "address in memory/ collection a2")
+
+(33, "address in memory/ collection a3")
+
+The documents in the collection would be at the "addresses" a1, a2 and a3. The order does not have to match the order in the index (and most likely, it indeed won't).
+
+The important thing is that the index items are ordered (ascending or descending - depending on how you created the index). createIndex({age: 1}) creates an index with ascending sorting, createIndex({age: -1}) creates one with descending sorting.
+
+MongoDB is now able to quickly find a fitting document when you filter for its age as it has a sorted list. Sorted lists are way quicker to search because you can skip entire ranges (and don't have to look at every single document).
+
+Additionally, sorting (via sort(...)) will also be sped up because you already have a sorted list. Of course this is only true when sorting for the age.
+
+
+*db.contactos.dropIndex({"dob.age": 1})
+ query para eleminar index
+ 
+indices compuestos
+* db.contactos.createIndex({"dob.age": 1, gender: 1})       
+
+
+ 
+COLLSCAN revisa todos la coleccion para buscar un documento
+INDEXSCAN solo revisa los valores establecidos en el index
+
+
+filtrar por un index y ordenarlos de forma asc
+db.contactos.explain().find({"dob.age":35}).sort({gender: 1})
+ 
+
+db.contactos.getIndexes()
+consulta que devuelve si existe ya un index en la tabla que estsmos consultando
+
+db.contactos.createIndex({email: 1}, {unique:true})
+consulta que nos permite crear un indice unico para un campo 
+
+db.contactos.createIndex({"dob.age": 1}, {partialFilterExpression: {gender: "male"}})
+crea un filtro solamente para un segmento de informacion que conincida con que el genero sea male
+
+
+db.usuarios.createIndex({email: 1}, {unique: true, partialFilterExpression: {email: {$exists: true}}})
+crea un index solamente donde exista el campo que te entregamos para crear ese index
+
+db.sesiones.createIndex({createdAt: 1}, {expireAfterSeconds: 10})   
+index que se destruyen solo cada 10 segundos
+
+db.contacto.createIndex({"addresses.street": 1})
+indice creado dentro de un campo de un documento incrustado
+ 
+db.productos.createIndex({description: "text"}) 
+creamos un index dentro de un campo de texto
+
+solo se pude tener un index de texto por coleccion
+todo se almecena en lowercase
+
+ db.productos.find({$text: {$search: "awesome t-shirt"}}, {score: {$meta: "textScore"}}).pretty()
+ nos entrega un porcentaje de acierto en nuestra busqueda
+ 
+ db.productos.find({$text: {$search: "awesome t-shirt"}}, {score: {$meta: "textScore"}}).sort({score: {$meta: "textScore"}}).pretty()
+ me entrega el que tiene mas porcentaje de acierto
+ 
+ un indice de texto solo lo puedo eleminar por el nombre que tiene en su coleccion
+ ejemplo
+ db.productos.dropIndex("description_text")
+ 
+ 
+db.productos.createIndex({title: "text", description: "text"})
+de esta forma si tengo que crear un indice de otro campo de texto, puedo tener los dos 
+
+
+db.productos.find({$text: {$search: "awesome -t-shirt"}}).pretty()
+puedo excluir palabras de una busqueda con mi indice
+
+
+creando un indice de texto
+db.productos.createIndex({title: "text", description: "text", {default_language: "spanish"})  
+
+ db.productos.createIndex({title: "text", description: "text"}, {default_language: "english", weights: {title: 1, description: 10}})
+pordemos agregar un peso a cadaa tampo por ejemplo aca tratamos de decir que la puntiacion si el filtro esta en la descripcion tendra una valoracion de 10 veces mas
+
+db.productos.find({$text: {$search: "", $caseSensitive: true}})  
+filtrar palabras en miyusculas
+
+
+ db.ratings.createIndex({age: 1}, {background: true})  
+ permite crear el index en segundo plano , esto permite que la tabla no quede bloquada
+ 
+ 
+ Useful Resources & Links
+Helpful Articles/ Docs:
+
+More on partialFilterExpressions: https://docs.mongodb.com/manual/core/index-partial/
+
+Supported default_languages: https://docs.mongodb.com/manual/reference/text-search-languages/#text-search-languages
+
+creamos un objeto geoJSON
+
+db.places.insertOne({name: "California Academy of Sciences", location: {type: "Point", coordinates: [-122.4682834, 37.7698646]} })
+
+ db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [-122.471114, 37.771104]}}}})
+ consulta que permite consultar datos geo espaciales pero necesitamos antess tener creado un indice para que fucnione
+ 
+ db.places.createIndex({location: "2dsphere"}) 
+ consulta que crea un indice de esfera
+ 
+ db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [-122.471114, 37.771104]}}}}).pretty()
+ traeme el objeto mas cercano a esta ubicacion
+ 
+db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [-122.471114, 37.771104]},$maxDistance:30, $minDistance: 10 }}}).pretty()
+se pueden agregar parametros como distancia minima y distancia maxima
+  
+db.places.insertOne({name: "Conservatory of Flowers", location: {type: "Point", coordinates: [-122.4615748, 37.7701756]}})
+
+agregamos otro geoJson
+
+db.places.insertOne({name: "Golden Gate Tennis Park", location: {type: "Point", coordinates: [-122.4593702, 37.7705046]}})
+
+db.places.insertOne({name: "Nopa", location: {type: "Point", coordinates: [-122.4389058, 37.7747415]}})
+ 
+ const p1 = [-122.4547, 37.77473]  esq s iz
+ const p2 = [-122.45303, 37.76641] es s de                                                                                                                       
+  const p3 = [-122.51026, 37.76411]  es i de
+ const p4 = [-122.51088, 37.77131]    es i iz                                                                                                                          
+ 
+db.places.find({location: {$geoWithin: {$geometry: {type: "Polygon", coordinates: [[p1, p2, p3, p4,p1]]}}}}).pretty()
+obteneme todas las direccion que esten serca de esta area
+
+
+db.areas.insertOne({name: "Golden Gate Park", area: {type: "Polygon", coordinates: [[p1,p2,p3,p4,p1]]}})
+creamos una coleccion de areas
+ 
+ 
+ 
+db.areas.createIndex({area: "2dsphere"})
+creamos un indice de esfera
+ 
+ 
+db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates: [-122.49089, 37.76992] }}}}).pretty()
+consulta que me devulve en que area esta la direccion que estoy ingresando
+  
+db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates: [-122.48446, 37.77776] }}}}).pretty()
+como esta fuera del area no retorna nada
+   
+   
+   
+ db.places.find({location: {$geoWithin: {$centerSphere: [[-122.46203, 37.77286], 1 / 6378.1]}}}).pretty()
+ obtine los lugar mas cercanos del area dentro de un kilometro
+ 
+ Useful Resources & Links
+Helpful Articles/ Docs:
+
+Official Geospatial Docs: https://docs.mongodb.com/manual/geospatial-queries/
+
+Geospatial Query Operators: https://docs.mongodb.com/manual/reference/operator/query-geospatial/
+
+show collections
+
+db.personas.aggregate([{$match: {gender: "female"}}])   
+obtiene todos los registros que su genero sean mujeres
+
+el aggregate metodh tambien devulve un cursor
+
+> db.personas.aggregate([{$match: {gender: 'female'}},{$group: {_id: {state: "$location.state"}, totalPersons: {$sum: 1}}}]).pretty();
+
+cuenta cuantas personas viven en una localidad
+
+db.personas.aggregate([
+    { $match: { gender: 'female' } },
+    { $group: { _id: { state: "$location.state" }, totalPersons: { $sum: 1 } } },
+    { $sort: { totalPersons: -1 } }
+]).pretty();
+
+db.personas.aggregate([
+	{$match: {'dob.age': {$gt: 50}}},
+	{$group: {_id: {gender: '$gender'},numPersons: {$sum: 1},avgAge: {$avg: '$dob.age'}}},
+	{$sort: {numPersons: -1}}]).pretty();
+
+ordenamos los resultados de manera descendente
+
+db.personas.aggregate([ {$project: {_id: 0, gender:1, fullName: {$concat: ["$name.first", " ","$name.last"]}}} ]).pretty();  
+
+concatenacion simple
+
+db.personas.aggregate([ {$project: {_id: 0, gender:1, fullName: {$concat: [{$toUpper: "$name.first"}, " ",{$toUpper: "$name.last"}]}}} ]).pretty();
+concatenacion en mayuscula
+
+db.personas.aggregate([ {$project: {_id: 0, gender:1, fullName: {$concat: [{$toUpper: {$substrCP: ['$name.first',0,1]}}, " ",{$toUpper: "$name.last"}]}}} ]).pretty();                                                                                                                                       
+usamos la funcion substring
+
+db.personas.aggregate([
+    {
+      $project: {
+        _id: 0,
+        gender: 1,
+        fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.first',
+                1,
+                { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+              ]
+            },
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.last',
+                1,
+                { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]).pretty();
+
+solamente el primer caracter del  nombre y apellido en mayuscula
+
+
+db.personas.aggregate([
+	{$project: {_id: 0, name: 1, email: 1, location: {type: "Point", coordinates: [
+	{$convert: {input: '$location.coordinates.longitude', to: "double", onError: 0.0, onNull: 0.0 }},
+	{$convert: {input: '$location.coordinates.latitude', to: "double", onError: 0.0, onNull: 0.0 }},
+	]}}},
+    {
+      $project: {
+        _id: 0,
+        gender: 1,
+		email: 1,
+		location: 1,
+        fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.first',
+                1,
+                { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+              ]
+            },
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.last',
+                1,
+                { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]).pretty();
+
+
+convierte las coordenas en valores double
+
+
+
+db.personas.aggregate([
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        birthdate: { $convert: { input: '$dob.date', to: 'date' } },
+        age: "$dob.age",
+        location: {
+          type: 'Point',
+          coordinates: [
+            {
+              $convert: {
+                input: '$location.coordinates.longitude',
+                to: 'double',
+                onError: 0.0,
+                onNull: 0.0
+              }
+            },
+            {
+              $convert: {
+                input: '$location.coordinates.latitude',
+                to: 'double',
+                onError: 0.0,
+                onNull: 0.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        gender: 1,
+        email: 1,
+        location: 1,
+        birthdate: 1,
+        age: 1,
+        fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.first',
+                1,
+                { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+              ]
+            },
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.last',
+                1,
+                { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]).pretty();
+
+
+
+fecha de cumpleaños y edad
+
+db.personas.aggregate([
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        birthdate: { $toDate: '$dob.date' },
+        age: "$dob.age",
+        location: {
+          type: 'Point',
+          coordinates: [
+            {
+              $convert: {
+                input: '$location.coordinates.longitude',
+                to: 'double',
+                onError: 0.0,
+                onNull: 0.0
+              }
+            },
+            {
+              $convert: {
+                input: '$location.coordinates.latitude',
+                to: 'double',
+                onError: 0.0,
+                onNull: 0.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        gender: 1,
+        email: 1,
+        location: 1,
+        birthdate: 1,
+        age: 1,
+        fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.first',
+                1,
+                { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+              ]
+            },
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.last',
+                1,
+                { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]).pretty();
+
+
+lo mismo que el anterior pero con menos datos
+
+
+
+
+$group vs $project
+
+$group: sirve para agrupar varios documentos en un documentos, se ocupa para
+sum, count, average, build array
+$project: es una relacion uno a uno, obtienes un documento y luego volveras un documento
+include/exclude fields, transform fields en un solo documento
+
+
+
+db.amigos.aggregate([
+    { $group: { _id: { age: "$age" }, allHobbies: { $push: "$hobbies" } } }
+]).pretty();
+
+ejemplo de agrupaciones
+
+db.amigos.aggregate([
+    { $unwind: "$hobbies" }, 
+    { $group: { _id: { age: "$age" }, allHobbies: { $push: "$hobbies" } } }
+  ]).pretty();
+
+en ves de mostrar matrices por separado muesta una sola matriz con todos los valores pero esta query me deja elementos duplicados
+
+
+db.amigos.aggregate([
+    { $unwind: "$hobbies" }, 
+    { $group: { _id: { age: "$age" }, allHobbies: { $addToSet: "$hobbies" } } }
+  ]).pretty();
+
+
+sin duplicados
+
+
+db.amigos.aggregate([
+    { $project: { _id: 0, examScore: { $slice: ["$examScores", 2, 1] } } }
+  ]).pretty();
+
+
+proyecciones en un arreeglo
+
+db.amigos.aggregate([
+    { $project: { _id: 0, numScores: { $size: "$examScores" } } }
+  ]).pretty();
+
+
+cantidad de elemenots que hay en un array
+
+=======================================================
+
+
+transforma los puntajes en un matris para que se vean solo los que  son mayores a 60 , como estar usando having
+db.amigos.aggregate([
+    {
+      $project: {
+        _id: 0,
+        scores: { $filter: { input: '$examScores', as: 'sc', cond: { $gt: ["$$sc.score", 60] } } }
+      }
+    }
+  ]).pretty();
+
+
+obtner solamente el puntaje mas alto de cada registro
+db.amigos.aggregate([
+    { $unwind: "$examScores" },
+    { $project: { _id: 1, name: 1, age: 1, score: "$examScores.score" } },
+    { $sort: { score: -1 } },
+    { $group: { _id: "$_id", name: { $first: "$name" }, maxScore: { $max: "$score" } } },
+    { $sort: { maxScore: -1 } }
+  ]).pretty();
+ 
+
+
+consultas de distribucion 
+  db.personas.aggregate([
+    {
+      $bucket: {
+        groupBy: '$dob.age',
+        boundaries: [18, 30, 40, 50, 60, 120],
+        output: {
+          numPersons: { $sum: 1 },
+          averageAge: { $avg: '$dob.age' }
+        }
+      }
+    }
+  ])
+  .pretty();
+
+db.personas.aggregate([
+    {
+      $bucketAuto: {
+        groupBy: '$dob.age',
+        buckets: 5,
+        output: {
+          numPersons: { $sum: 1 },
+          averageAge: { $avg: '$dob.age' }
+        }
+      }
+    }
+  ]).pretty();
+  
+  
+  obtener las 10 personas con la edad mas antigua
+  
+  db.personas.aggregate([
+    { $match: { gender: "male" } },
+    { $project: { _id: 0, gender: 1, name: { $concat: ["$name.first", " ", "$name.last"] }, birthdate: { $toDate: "$dob.date" } } },
+    { $sort: { birthdate: 1 } },
+    { $skip: 10 },
+    { $limit: 10 }
+  ]).pretty();
+  
+  
+  
+  crea un nueva coleccion en base al resultado de esta consulta
+  db.personas.aggregate([
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        birthdate: { $toDate: '$dob.date' },
+        age: "$dob.age",
+        location: {
+          type: 'Point',
+          coordinates: [
+            {
+              $convert: {
+                input: '$location.coordinates.longitude',
+                to: 'double',
+                onError: 0.0,
+                onNull: 0.0
+              }
+            },
+            {
+              $convert: {
+                input: '$location.coordinates.latitude',
+                to: 'double',
+                onError: 0.0,
+                onNull: 0.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        gender: 1,
+        email: 1,
+        location: 1,
+        birthdate: 1,
+        age: 1,
+        fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.first',
+                1,
+                { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+              ]
+            },
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.last',
+                1,
+                { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    { $out: "transformedPersons" }
+  ]).pretty();
+
+
+
+geo near state
+
+db.transformedPersons.createIndex({location: "2dsphere"})
+
+db.transformedPersons.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [-18.4, -42.8]
+        },
+        maxDistance: 1000000,
+        $limit: 10,
+        query: { age: { $gt: 30 } },
+        distanceField: "distance"
+      }
+    }
+  ]).pretty();
+
+
+working with numeric data
+
+int32  only full numbers (-2.147.483.648 to 2.147.483.647) 
+int64(Longs) only full numbers (-9.223.372.036.854.775.808 to 9.223.372.036.854.775.807)
+Doubles(64 bits)numbers with decimal places (decimal values are approximated)
+high precison doubles (128bit) numbers with decimal places (decimal values are stored with high precision (34 decimal digits))
+
+obligamos a que el numero incertado sea un entero de 32 bits
+db.personas.insertOne({age: NumberInt(26)})
+
+obligamos a que el numero incertado sea un entero de 64 bits
+db.company.insertOne({valuation: NumberLong("9223372036854775807")})     
+si creo un valor con NumberLong
+y quiero actualizar su informacion tengo que hacer algo mas o menos asi
+db.company.updateOne({}, {$inc: {valuation: NumberLong("1")}})
+
+obligamos a que se guarde el decimal que estamos enviando
+db.ciencias.insertOne({a: NumberDecimal("0.3"), b: NumberDecimal("0.1")}) debe tener las " para que sea mas preciso
+  
+si quiero actualizar los datos de manera precisa  
+db.ciencias.updateOne({}, {$inc: {a: NumberDecimal("0.1")}})     
+
+Useful Resources & Links
+Useful Articles/ Docs:
+
+Float vs Double vs Decimal - A Discussion on Precision: https://stackoverflow.com/questions/618535/difference-between-decimal-float-and-double-in-net
+
+Number Ranges: https://social.msdn.microsoft.com/Forums/vstudio/en-US/d2f723c7-f00a-4600-945a-72da23cbc53d/can-anyone-explain-clearly-about-float-vs-decimal-vs-double-?forum=csharpgeneral
+
+Modelling Number/ Monetary Data in MongoDB: https://docs.mongodb.com/manual/tutorial/model-monetary-data/
+  
+  
+==========================================================================================
+
+crear usuario con acceso a toda la base de datos
+db.createUser({user: "nisepulvedaa", pwd: "nisepulvedaa", roles: ["userAdminAnyDatabase"]})
+
+inicio sesion con el usuario creado
+db.auth('nisepulvedaa', 'nisepulvedaa')
+
+roles tipicos
+
+Database User
+
+read
+readWrite
+
+Database Admin
+
+dbAdmin
+userAdmin
+dbOwner
+
+All Database Roles
+
+readAnyDatabase
+readWriteAnyDatabase
+userAdminAnyDatabase
+dbAdminAnyDatabase
+
+Cluster Admin
+
+clusterManager
+clusterMonitor
+hostManager
+clusterAdmin
+
+Backup/Restore
+
+backup
+restore
+
+Superuser
+
+dbOwner (admin)
+userAdmin (admin)
+userAdminAnyDatabase
+root
+
+comando para iniciar sesion en la base de datos con el usuario creado
+mongo -u nisepulvedaa -p nisepulvedaa --authenticationDatabase admin
+
+creamos un usuario en la bd de shop
+ db.createUser({user: 'appdev', pwd: 'dev', roles: ["readWrite"]})
+ mongo -u appdev -p dev -authenticationDatabase shop
+ 
+ 
+ db.updateUser("appdev",{roles: ["readWrite", {role: "readWrite", db: "blog"}]})
+ comado que actualiza el rol del usuario, y agrega un rol nuevo a otra base de datos
+ 
+db.getUser("appdev")
+comando que nos devuelve la informacion del usuario
+
+
+=====================================================================================
+
+comando que crea un certificado de seguridad
+
+openssl req -newkey rsa:2048 -new -x509 -days 365 -nodes -out mondodb-cert.crt -keyout mongodb-cert.key
+
+unificamos los dos archivos en uno
+
+type mongodb-cert.key mongodb-cert.crt > mongodb.pem
+
+levantamos servicio usando ssl
+
+mongod --tlsMode  requireTLS --tlsCertificateKeyFile mongodb.pem
+
+passwordClouster : EyfGBqyXtkNkKeAL
+
+Useful Resources & Links
+Useful Articles/ Docs:
+
+Official Docs on Replica Sets: https://docs.mongodb.com/manual/replication/
+
+
+
+
+==================================================================================================
+
+crear una sesion para una transaccion
+
+const session = db.getMongo().startSession()
+session.startTransaction()
+const usersC = session.getDatabase("blog").users
+const postsC = session.getDatabase("blog").posts
+session.commitTransaction()
+
+Useful Resources & Links
+Useful Articles/ Docs:
+
+Official Docs on Transactions: https://docs.mongodb.com/manual/core/transactions/
+
+
+
+
+
+Official Docs on Sharding: https://docs.mongodb.com/manual/sharding/
+comando para iniciar sesion con ssl
+mongo --tls --host localhost --tlsCAFile mongodb.pem
+
+
+Useful Resources & Links
+Helpful Articles/ Docs:
+
+Official "Encryption at Rest" Docs: https://docs.mongodb.com/manual/core/security-encryption-at-rest/
+
+Official Security Checklist: https://docs.mongodb.com/manual/administration/security-checklist/
+
+What is SSL/ TLS? => https://www.acunetix.com/blog/articles/tls-security-what-is-tls-ssl-part-1/
+
+Official MongoDB SSL Setup Docs: https://docs.mongodb.com/manual/tutorial/configure-ssl/
+
+Official MongoDB Users & Auth Docs: https://docs.mongodb.com/manual/core/authentication/
+
+Official Built-in Roles Docs: https://docs.mongodb.com/manual/core/security-built-in-roles/
+
+Official Custom Roles Docs: https://docs.mongodb.com/manual/core/security-user-defined-roles/
+
+Pantalla completa
+
+===========================================================================================
+
+use perfomance
+
+crea una tabla con limite de tamaño y limite de registros
+db.createCollection("capped", {capped:true , size: 1000, max: 3})
+
+orden ascendente 
+db.capped.find().sort({$natural: -1}).pretty()
+
+
+
+Useful Resources & Links
+Helpful Articles/ Docs:
+
+Learn how to build a full RESTful API with Node.js: https://academind.com/learn/node-js/building-a-restful-api-with/
+
+
+Useful Resources & Links
+Helpful Articles/ Docs:
+
+Official Stitch Docs: https://docs.mongodb.com/stitch/
+
+Complete Stitch Username + Password Auth Flow: https://docs.mongodb.com/stitch/authentication/userpass/
+
+Stitch Services (e.g. AWS S3): https://docs.mongodb.com/stitch/reference/partner-services/amazon-service/

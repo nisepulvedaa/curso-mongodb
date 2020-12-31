@@ -1,0 +1,11 @@
+1) import the attached data into a new database (eg boxOffice) and collection (e.q. movieeStarts)
+2) search all movies tha have a raiting higher than 9.2 and a runtime lower then 100 minutes
+3) search all movie that have a genre of "drama" or "action"
+4) search all movies where visitors exceeded expectedVisitos
+
+respuestas:
+
+1) mongoimport boxoffice.json -d boxOffice -c movieeStarts --jsonArray --drop
+2) db.movieeStarts.find({$and: [{"meta.rating": {$gt: 9.2}},{"meta.runtime": {$lt: 100}} ]}).pretty()
+3) db.movieeStarts.find({$or: [{"genre": {$eq: "drama"}},{"genre": {$eq: "action"}}]}).pretty()
+4) db.movieeStarts.find({$expr: {$gt: ["$visitors","$expectedVisitors"]}}).pretty()
